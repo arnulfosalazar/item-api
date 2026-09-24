@@ -21,7 +21,16 @@ async function main() {
     
     
     app.get("/items", function (req, res) {
-        res.send(items);
+        if (req.query.minDamage === undefined) {
+            return res.send(items);
+        }
+
+        const minDamage = Number(req.query.minDamage);
+        if (Number.isNaN(minDamage)) {
+            return res.status(400).send("Invalid minDamage");
+        }
+        res.send(items.filter(item => item.damage >= minDamage));
+
     });
     
     app.get("/items/:id", function (req, res) {
@@ -47,6 +56,21 @@ async function main() {
     });
 
     app.post("/items", function (req, res) {
+        // Validate users body info
+        if (req.body.name === undefined) { 
+            return res.status(400).send("Missing name");
+        }
+        if (req.body.damage === undefined) {
+            return res.status(400).send("Missing damage");
+        }
+        if (!Number.isInteger(req.body.damage) || req.body.damage < 0) {
+            return res.status(400).send("Invalid damage");
+        }
+        if (typeof req.body.name !== "string" || req.body.name.trim() === "") {
+            return res.status(400).send("Invalid name");
+        }
+
+        // Passed
         const newItem = {
             id: items.length + 1,
             name: req.body.name,
