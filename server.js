@@ -44,6 +44,11 @@ async function main() {
     });
 
     app.get("/items/:id/damage", function (req, res) {
+        // const minDamage = Number(req.query.minDamage);
+        // const maxDamage = Number(req.query.maxDamage);
+
+        // items.filter(item => item.damage >= minDamage && item.damage <= maxDamage);
+
         const id = Number(req.params.id);
         const item = items.find(item => item.id === id);
         if(item === undefined){
